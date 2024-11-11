@@ -33,24 +33,28 @@ $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Add Task Form -->
     <form action="add_task.php" method="POST" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="title" class="form-control" placeholder="Add a new task" required>
+        <div class="input-group mb-2">
+            <input type="text" name="title" class="form-control" placeholder="Task Title" required>
             <input type="date" name="task_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
-            <button class="btn btn-primary" type="submit">Add Task</button>
         </div>
+        <textarea name="description" class="form-control mb-2" placeholder="Task Description" rows="3"></textarea>
+        <button class="btn btn-primary w-100" type="submit">Add Task</button>
     </form>
 
     <!-- Task List -->
     <ul class="list-group">
         <?php if (count($tasks) > 0): ?>
             <?php foreach ($tasks as $task): ?>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="<?= $task['completed'] ? 'text-decoration-line-through' : '' ?>">
-                    <?= htmlspecialchars($task['title']) ?>
-                </span>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold <?= $task['completed'] ? 'text-decoration-line-through' : '' ?>">
+                        <?= htmlspecialchars($task['title']) ?>
+                    </div>
+                    <small class="text-muted"><?= htmlspecialchars($task['description']) ?></small>
+                </div>
                 <div>
-                    <a href="mark_complete.php?id=<?= $task['id'] ?>" class="btn btn-success btn-sm me-1">
-                        <?= $task['completed'] ? 'Undo' : 'Complete' ?>
+                    <a href="mark_complete.php?id=<?= $task['id'] ?>" class="btn btn-sm <?= $task['completed'] ? 'btn-secondary' : 'btn-success' ?> me-1">
+                        <?= $task['completed'] ? 'Uncomplete' : 'Complete' ?>
                     </a>
                     <a href="edit_task.php?id=<?= $task['id'] ?>" class="btn btn-warning btn-sm me-1">Edit</a>
                     <a href="delete_task.php?id=<?= $task['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
