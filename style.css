@@ -6,8 +6,16 @@ body {
     margin-top: 50px;
 }
 .text-decoration-line-through {
-    color: #6c757d;
+    color: #65a5de;
+}
+.text-decoration-line-through {
+    color: #65a5de;
 }
 .text-decoration-line-through {
     color: #6c757d;
 }
+
+.form-check-input {
+    cursor: pointer;
+}
+

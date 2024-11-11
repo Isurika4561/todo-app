@@ -1,10 +1,10 @@
 <?php
 include 'db.php';
 
-// Handle date filtering
+// Date filter
 $dateFilter = isset($_GET['task_date']) ? $_GET['task_date'] : date('Y-m-d');
 
-// Fetch tasks based on the selected date
+// Fetch tasks by date
 $query = $conn->prepare("SELECT * FROM tasks WHERE task_date = :task_date ORDER BY id DESC");
 $query->execute(['task_date' => $dateFilter]);
 $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -46,16 +46,16 @@ $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
         <?php if (count($tasks) > 0): ?>
             <?php foreach ($tasks as $task): ?>
             <li class="list-group-item d-flex justify-content-between align-items-start">
-                <div class="ms-2 me-auto">
-                    <div class="fw-bold <?= $task['completed'] ? 'text-decoration-line-through' : '' ?>">
-                        <?= htmlspecialchars($task['title']) ?>
-                    </div>
-                    <small class="text-muted"><?= htmlspecialchars($task['description']) ?></small>
+                <div class="form-check">
+                    <input class="form-check-input mark-complete" type="checkbox" 
+                           data-id="<?= $task['id'] ?>" 
+                           <?= $task['completed'] ? 'checked' : '' ?>>
+                    <label class="form-check-label <?= $task['completed'] ? 'text-decoration-line-through' : '' ?>">
+                        <strong><?= htmlspecialchars($task['title']) ?></strong><br>
+                        <small><?= htmlspecialchars($task['description']) ?></small>
+                    </label>
                 </div>
                 <div>
-                    <a href="mark_complete.php?id=<?= $task['id'] ?>" class="btn btn-sm <?= $task['completed'] ? 'btn-secondary' : 'btn-success' ?> me-1">
-                        <?= $task['completed'] ? 'Uncomplete' : 'Complete' ?>
-                    </a>
                     <a href="edit_task.php?id=<?= $task['id'] ?>" class="btn btn-warning btn-sm me-1">Edit</a>
                     <a href="delete_task.php?id=<?= $task['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                 </div>
@@ -66,5 +66,29 @@ $tasks = $query->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
     </ul>
 </div>
+
+<!-- JavaScript for Checkbox AJAX -->
+<script>
+    document.querySelectorAll('.mark-complete').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const taskId = this.dataset.id;
+            const completed = this.checked ? 1 : 0;
+            
+            fetch('update_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: taskId, completed: completed })
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      location.reload();
+                  }
+              });
+        });
+    });
+</script>
+
 </body>
 </html>
