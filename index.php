@@ -10,6 +10,24 @@ $taskQuery->execute(['task_date' => $dateFilter]);
 $tasks = $taskQuery->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<?php
+// Function to determine the greeting based on the current time
+function getGreetingMessage() {
+    date_default_timezone_set('Asia/Colombo'); // Set to Sri Lanka timezone
+    $currentHour = date('H'); // Get the current hour in 24-hour format
+
+    if ($currentHour >= 5 && $currentHour < 12) {
+        return "Good Morning";
+    } elseif ($currentHour >= 12 && $currentHour < 17) {
+        return "Good Afternoon";
+    } elseif ($currentHour >= 17 && $currentHour < 21) {
+        return "Good Evening";
+    } else {
+        return "Good Night";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,8 +38,12 @@ $tasks = $taskQuery->fetchAll(PDO::FETCH_ASSOC);
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<h2 class="text-center mt-4" ><?php echo getGreetingMessage(); ?>,  Welcome to Your To-Do List</h2>
+
 <div class="container">
     <h2 class="text-center my-4">To-Do List with Comments</h2>
+    
 
     <!-- Date Filter -->
     <form method="GET" class="mb-3">
