@@ -1,8 +1,9 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #62e9db;
 }
+
 .container {
-    max-width: 600px;
+    max-width: 1000px;
     margin-top: 50px;
 }
 .text-decoration-line-through {
@@ -18,4 +19,9 @@ body {
 .form-check-input {
     cursor: pointer;
 }
+/* Add this CSS to your styles.css or within a <style> tag */
+.text-decoration-line-through {
+    text-decoration: line-through;
+}
+/* Add this to your CSS file or within a <style> tag */
 
