@@ -1,15 +1,20 @@
 <?php
 include 'db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $task_date = $_POST['task_date'];
-    
-    $stmt = $conn->prepare("INSERT INTO tasks (title, description, task_date, completed) VALUES (:title, :description, :task_date, 0)");
-    $stmt->execute(['title' => $title, 'description' => $description, 'task_date' => $task_date]);
-}
+$title = $_POST['task_title'];
+$description = $_POST['task_description'];
+$task_date = $_POST['task_date'];
+$completion_level = $_POST['completion_level']; // Get completion level from form
 
-header('Location: index.php');
+$sql = "INSERT INTO tasks (title, description, task_date, completion_level) VALUES (:title, :description, :task_date, :completion_level)";
+$stmt = $conn->prepare($sql);
+$stmt->execute([
+    ':title' => $title,
+    ':description' => $description,
+    ':task_date' => $task_date,
+    ':completion_level' => $completion_level
+]);
+
+header("Location: index.php?task_date=$task_date");
 exit;
 ?>
