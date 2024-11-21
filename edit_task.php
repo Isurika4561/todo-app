@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="container">
     <h2 class="my-4">Edit Task</h2>
-    <form method="POST">
-        <div class="mb-3">
+    <form action="update_completion.php" method="POST">
+    <div class="mb-3">
             <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($task['title']) ?>" required>
         </div>
         <div class="mb-3">
@@ -39,7 +39,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
         <a href="index.php" class="btn btn-secondary">Cancel</a>
-    </form>
+    <input type="hidden" name="task_id" value="<?= $task['id'] ?>">
+    <label for="completion_slider_<?= $task['id'] ?>">Completion Level:</label>
+    <input 
+        type="range" 
+        id="completion_slider_<?= $task['id'] ?>" 
+        name="completion_level" 
+        class="form-range" 
+        min="0" 
+        max="100" 
+        step="10" 
+        value="<?= $task['completion_level'] ?>" 
+        oninput="updateCompletionValue<?= $task['id'] ?>(this.value)"
+    >
+    <span id="completion_value_<?= $task['id'] ?>" class="fw-bold"><?= $task['completion_level'] ?>%</span>
+    <button type="submit" class="btn btn-primary btn-sm mt-2">Update</button>
+</form>
+<script>
+    function updateCompletionValue<?= $task['id'] ?>(value) {
+        document.getElementById('completion_value_<?= $task['id'] ?>').textContent = value + '%';
+    }
+</script>
+
 </div>
 </body>
 </html>
