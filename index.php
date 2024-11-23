@@ -28,6 +28,7 @@ function getGreetingMessage() {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,28 +68,44 @@ function getGreetingMessage() {
     <ul class="list-group">
         <?php if (count($tasks) > 0): ?>
             <?php foreach ($tasks as $task): ?>
-    <li class="list-group-item">
-        <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <strong><?= htmlspecialchars($task['title']) ?></strong><br>
-                <small><?= htmlspecialchars($task['description']) ?></small>
-                <div class="progress mt-2" style="height: 20px;">
-                    <div 
-                        class="progress-bar <?= $task['completion_level'] == 100 ? 'bg-success' : 'bg-primary' ?>" 
-                        role="progressbar" 
-                        style="width: <?= $task['completion_level'] ?>%;" 
-                        aria-valuenow="<?= $task['completion_level'] ?>" 
-                        aria-valuemin="0" 
-                        aria-valuemax="100">
-                        <?= $task['completion_level'] ?>%
-                    </div>
+                <li class="list-group-item">
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Left side: Checkbox and Task Details -->
+        <div class="d-flex align-items-start flex-column w-75">
+            <div class="d-flex align-items-center mb-2">
+                <div class="form-check me-3">
+                    <input class="form-check-input mark-complete" type="checkbox" 
+                        data-id="<?= $task['id'] ?>" 
+                        <?= $task['completed'] ? 'checked' : '' ?>>
+                </div>
+                <div>
+                    <strong><?= htmlspecialchars($task['title']) ?></strong><br>
+                    <small><?= htmlspecialchars($task['description']) ?></small>
                 </div>
             </div>
-            <div>
-                <a href="edit_task.php?id=<?= $task['id'] ?>" class="btn btn-warning btn-sm me-1">Edit</a>
-                <a href="delete_task.php?id=<?= $task['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+            <!-- Completion Level Marker -->
+            <div class="progress mt-2" style="height: 20px; width: 100%;">
+                <div 
+                    class="progress-bar <?= $task['completion_level'] == 100 ? 'bg-success' : 'bg-primary' ?>" 
+                    role="progressbar" 
+                    style="width: <?= $task['completion_level'] ?>%;" 
+                    aria-valuenow="<?= $task['completion_level'] ?>" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100">
+                    <?= $task['completion_level'] ?>%
+                </div>
             </div>
         </div>
+        <!-- Right side: Action Buttons -->
+        <div>
+            <a href="edit_task.php?id=<?= $task['id'] ?>" class="btn btn-warning btn-sm me-1">Edit</a>
+            <a href="delete_task.php?id=<?= $task['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+        </div>
+    </div>
+</li>
+
+
+
 
 
 
@@ -124,21 +141,6 @@ function getGreetingMessage() {
     </ul>
 </div>
 
-<div class="mb-3">
-    <label for="completion_level" class="form-label">Completion Level (%)</label>
-    <input 
-        type="range" 
-        id="completion_level" 
-        name="completion_level" 
-        class="form-range" 
-        min="0" 
-        max="100" 
-        step="10" 
-        value="0"
-        oninput="updateCompletionValue(this.value)"
-    >
-    <span id="completion_value" class="fw-bold">0%</span>
-</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -147,19 +149,24 @@ function getGreetingMessage() {
         document.getElementById('completion_value').textContent = value + '%';
     }
     document.querySelectorAll('.mark-complete').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const taskId = this.dataset.id;
-            const completed = this.checked ? 1 : 0;
-            
-            fetch('update_status.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: taskId, completed: completed })
-            });
-        });
+    checkbox.addEventListener('change', function () {
+        const taskId = this.dataset.id;
+        const completed = this.checked ? 1 : 0;
+
+        fetch('update_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: taskId, completed: completed })
+        }).then(response => {
+            if (!response.ok) {
+                alert('Error updating task status.');
+            }
+        }).catch(err => console.error('Fetch error:', err));
     });
+});
+
 </script>
 </body>
 </html>
